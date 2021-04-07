@@ -1,152 +1,153 @@
 #!/usr/bin/env python3
 
-# vaccination_phase.py
-# COSC110 - Introduction to programming and the UNIX Environment
-# Assignment 2 - Programming task 1
-# ID: 220234814 - Jarryd W. Hoffman
+"""
+vaccination_phase.py
+
+Description:
+This script determines an individual's eligibility for COVID-19 vaccination phase based on various criteria
+such as age, occupation, and medical conditions. It implements a Command-Line Interface (CLI) to interactively
+gather information from the user and provide corresponding vaccination phase recommendations.
+
+Author:
+Jarryd Hoffman
+
+Date:
+02/04/2021
+"""
 
 print("*** Vaccination phase rollout ***")
 
 group = 0  # grouping integer
 
+def get_user_input(prompt):
+    """
+    Gets user input and validates it against a predefined set of responses ('y', 'n', 'yes', 'no').
+
+    Args:
+        prompt (str): The input prompt to display to the user.
+
+    Returns:
+        str: Valid user input.
+    """
+    valid_responses = ['y', 'n', 'yes', 'no']
+    while True:
+        user_input = input(prompt).strip().lower()
+        if user_input in valid_responses:
+            return user_input
+        print("\nYour phase can not be determined - Please ensure you enter either 'yes' or 'no'\n")
 
 if group == 0:  # Phase 1a
     while True:
-        userInput = input("\nAre you a:\n"
-                          "Quarantine and border worker, "
-                          "prioritised frontline healthcare worker, "
-                          "or an aged care/disability care staff member or resident? (Y/N) : ")
-        if userInput == "" or not userInput[0].lower() in ["y", "n"]:
-            # Validate user input to ensure the first character (index 0) is a valid character/string
-            # Forces users input to lower case to avoid case sensitive results
-            print("\nYour phase can not be determined - Please ensure you enter either 'yes' or 'no'\n")
-            # Invalid input includes any empty, whitespace and non 'y' or 'n' character as first character (index 0)
-        else:
-            # Users input validated and meets requirements
-            if userInput[0].lower() == "y":
-                # User input contains 'y' as first character (index 0)
-                print("\nVaccines will be made available to you in Phase 1a\n")
-            elif userInput[0].lower() == "n":
-                # User input contains 'n' as first character (index 0)
-                group = group + 1  # increment grouping integer by 1
-            break
-
+        user_input = get_user_input(
+            "\nAre you a:\n"
+            "Quarantine and border worker, "
+            "prioritised frontline healthcare worker, "
+            "or an aged care/disability care staff member or resident? (Y/N) : "
+        )
+        # Users input validated and meets requirements
+        if user_input[0] == "y":
+            # User input contains 'y' as first character (index 0)
+            print("\nVaccines will be made available to you in Phase 1a\n")
+        elif user_input[0] == "n":
+            # User input contains 'n' as first character (index 0)
+            group += 1  # increment grouping integer by 1
+        break
 
 if group == 1:  # Phase 1b
     while True:
-        userInput = input("\nAre you a:\n"
-                          "Health care worker, "
-                          "or a critical or high risk worker "
-                          "(including defence, police, fire, emergency services and meat processing)? (Y/N) : ")
-        if userInput == "" or not userInput[0].lower() in ["y", "n"]:
-            print("\nYour phase can not be determined - Please ensure you enter either 'yes' or 'no'\n")
-        else:
-            if userInput[0].lower() == "y":
-                print("\nVaccines will be made available to you in phase 1b\n")
-            elif userInput[0].lower() == "n":
-                group = group + 1
-            break
-
-
-#########################################################################################################
-# Function: indigenousAustralian
-# Asks the user if they are of Australian or Torres Strait Islander descent and waits for users response
-#########################################################################################################
-
-
-def indigenousAustralian():
-    while True:
-        isATSI = input("\nDo you identify as an Aboriginal and/or Torres Strait Islander person? (Y/N) : ")
-        if isATSI == "" or not isATSI[0].lower() in ["y", "n"]:
-            print("\nYour phase can not be determined - Please ensure you enter either 'yes' or 'no'\n")
-            continue
-        else:
-            if isATSI[0].lower() == "y":
-                # User input contains 'y' as first character (index 0)
-                if 18 <= userAge < 55:
-                    # User input ranges from integer greater than or equal to '18' to less than '55'
-                    print("\nVaccines will be made available to you in Phase 2a\n")
-                elif userAge >= 55:
-                    # User input is integer greater than or equal to '55'
-                    print("\nVaccines will be made available to you in Phase 1b\n")
-            if isATSI[0].lower() == "n":
-                # User input contains 'n' as first character (index 0)
-                if userAge >= 50:
-                    # User input is integer greater than or equal to '50'
-                    print("\nVaccines will be made available to you in Phase 2a\n")
-                else:
-                    # User input is integer less than 50
-                    print("\nVaccines will be made available to you in Phase 2b\n")
+        user_input = get_user_input(
+            "\nAre you a:\n"
+            "Health care worker, "
+            "or a critical or high risk worker "
+            "(including defence, police, fire, emergency services and meat processing)? (Y/N) : "
+        )
+        if user_input[0] == "y":
+            print("\nVaccines will be made available to you in phase 1b\n")
+        elif user_input[0] == "n":
+            group += 1
         break
 
+def indigenous_australian():
+    """
+    Asks the user if they identify as an Aboriginal and/or Torres Strait Islander person and determines
+    the vaccination phase based on the user's response and age.
 
-########################################################################################
-# Function: otherCategory
-# Asks the user if they are a critical or high risk worker and waits for users response
-########################################################################################
-
-
-def otherCategory():
+    Returns:
+        None
+    """
     while True:
-        userOther = input("\nAre you an other critical or high risk worker? (Y/N) : ")
-        if userOther == "" or not userOther[0].lower() in ["y", "n"]:
-            print("\nYour phase can not be determined - Please ensure you enter either 'yes' or 'no'\n")
-            continue
-        else:
-            if userOther[0].lower() == "y":
+        is_atsi = get_user_input("\nDo you identify as an Aboriginal and/or Torres Strait Islander person? (Y/N) : ")
+        # User input contains 'y' as first character (index 0)
+        if is_atsi[0] == "y":
+            if 18 <= user_age < 55:
+                # User input ranges from integer greater than or equal to '18' to less than '55'
                 print("\nVaccines will be made available to you in Phase 2a\n")
-            elif userOther[0].lower() == "n":
-                if userAge >= 50:
-                    print("\nVaccines will be made available to you in Phase 2a\n")
-                else:
-                    indigenousAustralian()
+            elif user_age >= 55:
+                # User input is integer greater than or equal to '55'
+                print("\nVaccines will be made available to you in Phase 1b\n")
+        if is_atsi[0] == "n":
+            # User input contains 'n' as first character (index 0)
+            if user_age >= 50:
+                # User input is integer greater than or equal to '50'
+                print("\nVaccines will be made available to you in Phase 2a\n")
+            else:
+                # User input is integer less than 50
+                print("\nVaccines will be made available to you in Phase 2b\n")
         break
 
+def other_category():
+    """
+    Asks the user if they are another critical or high-risk worker and determines the vaccination phase
+    based on the user's response and age.
+
+    Returns:
+        None
+    """
+    while True:
+        user_other = get_user_input("\nAre you another critical or high-risk worker? (Y/N) : ")
+        if user_other[0] == "y":
+            print("\nVaccines will be made available to you in Phase 2a\n")
+        elif user_other[0] == "n":
+            if user_age >= 50:
+                print("\nVaccines will be made available to you in Phase 2a\n")
+            else:
+                indigenous_australian()
+        break
 
 if group == 2:  # Phase(s) 2a/b/3
     while True:
         try:
-            userAge = int(input("\nPlease enter your age (in years) : "))
+            user_age = int(input("\nPlease enter your age (in years) : "))
         except ValueError:
             # return error message - User input non-numerical characters
-            print("\nIt appears you've enter an invalid character(s) - "
-                  "Please ensure you enter a valid age (non-negative numerical characters only)\n")
+            print(
+                "\nIt appears you've enter an invalid character(s) - "
+                "Please ensure you enter a valid age (non-negative numerical characters only)\n"
+            )
             continue
         else:
-            if userAge < 0:
-                # return error message - User input negative number
-                print("\nIt appears you've entered a negative number - "
-                      "Please ensure you enter a valid age (non-negative numerical characters only)\n")
-                continue
-            elif 0 <= userAge < 18:
+            if user_age < 0:
                 # User input is integer greater than or equal to '0' to less than '18'
+                print("\nInvalid input. Please enter a valid age (non-negative numerical characters only)\n")
+                continue
+            elif 0 <= user_age < 18:
                 while True:
-                    isMinor = input("\nHas it been recommended you obtain a vaccine? (Y/N) : ")
-                    if isMinor == "" or not isMinor[0].lower() in ["y", "n"]:
-                        print("\nYour phase can not be determined - Please ensure you enter either 'yes' or 'no'\n")
-                        continue
-                    else:
-                        if isMinor[0].lower() == "y":
-                            print("\nVaccines will be made available to you in phase 3\n")
-                        elif isMinor[0].lower() == "n":
-                            print("\nVaccination is not recommended for you\n")
+                    is_minor = get_user_input("\nHas it been recommended you obtain a vaccine? (Y/N) : ")
+                    if is_minor[0] == "y":
+                        print("\nVaccines will be made available to you in phase 3\n")
+                    elif is_minor[0] == "n":
+                        print("\nVaccination is not recommended for you\n")
                     break
-            elif 18 <= userAge < 70:
-                # User input is integer greater than or equal to '18' to less then '70'
-                while True:
-                    userMedCondition = input("\nDo you have an underlying medical condition or a disability? (Y/N) : ")
-                    if userMedCondition == "" or not userMedCondition[0].lower() in ["y", "n"]:
-                        print("\nYour phase can not be determined - Please ensure you enter either 'yes' or 'no'\n")
-                        continue
+            elif 18 <= user_age < 70:
+                # User input is integer greater than or equal to '18' to less than '70'
+                user_med_condition = get_user_input("\nDo you have an underlying medical condition or a disability? (Y/N) : ")
+                if user_med_condition[0] == "y":
+                    print("\nVaccines will be made available to you in phase 1b\n")
+                elif user_med_condition[0] == "n":
+                    if user_age >= 55:
+                        indigenous_australian()
                     else:
-                        if userMedCondition[0].lower() == "y":
-                            print("\nVaccines will be made available to you in phase 1b\n")
-                        elif userMedCondition[0].lower() == "n":
-                            if userAge >= 55:
-                                indigenousAustralian()
-                            else:
-                                otherCategory()
-                    break
+                        other_category()
             else:
                 print("\nVaccines will be made available to you in phase 1b\n")
         break
