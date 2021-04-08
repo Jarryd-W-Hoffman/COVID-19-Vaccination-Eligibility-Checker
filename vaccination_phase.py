@@ -17,7 +17,15 @@ Date:
 
 print("*** Vaccination phase rollout ***")
 
-group = 0  # grouping integer
+# Constants
+PHASE_1A = 0
+PHASE_1B = 1
+PHASE_2 = 2
+
+AGE_MINOR = 18
+AGE_ELIGIBLE_AUSTRALIAN = 50
+AGE_ELIGIBLE_2B = 55
+AGE_ELDERLY = 70
 
 def get_user_input(prompt):
     """
@@ -36,7 +44,9 @@ def get_user_input(prompt):
             return user_input
         print("\nYour phase can not be determined - Please ensure you enter either 'yes' or 'no'\n")
 
-if group == 0:  # Phase 1a
+group = PHASE_1A
+
+if group == PHASE_1A:  # Phase 1a
     while True:
         user_input = get_user_input(
             "\nAre you a:\n"
@@ -53,7 +63,7 @@ if group == 0:  # Phase 1a
             group += 1  # increment grouping integer by 1
         break
 
-if group == 1:  # Phase 1b
+if group == PHASE_1B:  # Phase 1b
     while True:
         user_input = get_user_input(
             "\nAre you a:\n"
@@ -79,15 +89,15 @@ def indigenous_australian():
         is_atsi = get_user_input("\nDo you identify as an Aboriginal and/or Torres Strait Islander person? (Y/N) : ")
         # User input contains 'y' as first character (index 0)
         if is_atsi[0] == "y":
-            if 18 <= user_age < 55:
+            if AGE_MINOR <= user_age < AGE_ELIGIBLE_2B:
                 # User input ranges from integer greater than or equal to '18' to less than '55'
                 print("\nVaccines will be made available to you in Phase 2a\n")
-            elif user_age >= 55:
+            elif user_age >= AGE_ELIGIBLE_2B:
                 # User input is integer greater than or equal to '55'
                 print("\nVaccines will be made available to you in Phase 1b\n")
         if is_atsi[0] == "n":
             # User input contains 'n' as first character (index 0)
-            if user_age >= 50:
+            if user_age >= AGE_ELIGIBLE_AUSTRALIAN:
                 # User input is integer greater than or equal to '50'
                 print("\nVaccines will be made available to you in Phase 2a\n")
             else:
@@ -108,13 +118,13 @@ def other_category():
         if user_other[0] == "y":
             print("\nVaccines will be made available to you in Phase 2a\n")
         elif user_other[0] == "n":
-            if user_age >= 50:
+            if user_age >= AGE_ELIGIBLE_AUSTRALIAN:
                 print("\nVaccines will be made available to you in Phase 2a\n")
             else:
                 indigenous_australian()
         break
 
-if group == 2:  # Phase(s) 2a/b/3
+if group == PHASE_2:  # Phase(s) 2a/b/3
     while True:
         try:
             user_age = int(input("\nPlease enter your age (in years) : "))
@@ -130,7 +140,7 @@ if group == 2:  # Phase(s) 2a/b/3
                 # User input is integer greater than or equal to '0' to less than '18'
                 print("\nInvalid input. Please enter a valid age (non-negative numerical characters only)\n")
                 continue
-            elif 0 <= user_age < 18:
+            elif 0 <= user_age < AGE_MINOR:
                 while True:
                     is_minor = get_user_input("\nHas it been recommended you obtain a vaccine? (Y/N) : ")
                     if is_minor[0] == "y":
@@ -138,13 +148,13 @@ if group == 2:  # Phase(s) 2a/b/3
                     elif is_minor[0] == "n":
                         print("\nVaccination is not recommended for you\n")
                     break
-            elif 18 <= user_age < 70:
+            elif 18 <= user_age < AGE_ELDERLY:
                 # User input is integer greater than or equal to '18' to less than '70'
                 user_med_condition = get_user_input("\nDo you have an underlying medical condition or a disability? (Y/N) : ")
                 if user_med_condition[0] == "y":
                     print("\nVaccines will be made available to you in phase 1b\n")
                 elif user_med_condition[0] == "n":
-                    if user_age >= 55:
+                    if user_age >= AGE_ELIGIBLE_2B:
                         indigenous_australian()
                     else:
                         other_category()
