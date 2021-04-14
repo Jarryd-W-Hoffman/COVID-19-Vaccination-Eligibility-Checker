@@ -16,10 +16,6 @@ Date:
 """
 
 # Constants
-PHASE_1A = 0
-PHASE_1B = 1
-PHASE_2 = 2
-
 AGE_MINOR = 18
 AGE_ELIGIBLE_AUSTRALIAN = 50
 AGE_ELIGIBLE_2B = 55
@@ -31,6 +27,7 @@ def get_user_input(prompt, valid_responses=('y', 'n', 'yes', 'no')):
 
     Args:
         prompt (str): The input prompt to display to the user.
+        valid_responses (tuple): Tuple of valid responses.
 
     Returns:
         str: Valid user input.
@@ -50,8 +47,7 @@ def determine_phase_1a():
     and aged care/disability care staff members or residents.
 
     Returns:
-    - True if the user is eligible for Phase 1a.
-    - False if the user is not eligible for Phase 1a.
+        str: Eligibility phase message. Returns "Phase 1a" if eligible, "Not eligible for Phase 1a" otherwise.
     """
     user_input = get_user_input(
         "\nAre you a:\n"
@@ -62,11 +58,10 @@ def determine_phase_1a():
     # Users input validated and meets requirements
     if user_input[0] == "y":
         # User input contains 'y' as first character (index 0)
-        print("\nVaccines will be made available to you in Phase 1a\n")
-        return True
+        return "Phase 1a"
     elif user_input[0] == "n":
         # User input contains 'n' as first character (index 0)
-        return False
+        return "Not eligible for Phase 1a"
 
 def determine_phase_1b():
     """
@@ -77,8 +72,7 @@ def determine_phase_1b():
     fire, emergency services, and meat processing.
 
     Returns:
-    - True if the user is eligible for Phase 1b.
-    - False if the user is not eligible for Phase 1b.
+        str: Eligibility phase message. Returns "Phase 1b" if eligible, "Not eligible for Phase 1b" otherwise.
     """
     user_input = get_user_input(
         "\nAre you a:\n"
@@ -87,10 +81,9 @@ def determine_phase_1b():
         "(including defence, police, fire, emergency services and meat processing)? (Y/N) : "
     )
     if user_input[0] == "y":
-        print("\nVaccines will be made available to you in phase 1b\n")
-        return True
+        return "Phase 1b"
     elif user_input[0] == "n":
-        return False
+        return "Not eligible for Phase 1b"
 
 def indigenous_australian(user_age):
     """
@@ -98,25 +91,25 @@ def indigenous_australian(user_age):
     the vaccination phase based on the user's response and age.
 
     Returns:
-        None
+        str: Eligibility phase message. Returns "Phase 2a", "Phase 1b", "Phase 2a", or "Phase 2b" based on user input and age.
     """
     is_atsi = get_user_input("\nDo you identify as an Aboriginal and/or Torres Strait Islander person? (Y/N) : ")
     # User input contains 'y' as first character (index 0)
     if is_atsi[0] == "y":
         if AGE_MINOR <= user_age < AGE_ELIGIBLE_2B:
             # User input ranges from integer greater than or equal to '18' to less than '55'
-            print("\nVaccines will be made available to you in Phase 2a\n")
+            return "Phase 2a"
         elif user_age >= AGE_ELIGIBLE_2B:
             # User input is integer greater than or equal to '55'
-            print("\nVaccines will be made available to you in Phase 1b\n")
+            return "Phase 1b"
     if is_atsi[0] == "n":
         # User input contains 'n' as first character (index 0)
         if user_age >= AGE_ELIGIBLE_AUSTRALIAN:
             # User input is integer greater than or equal to '50'
-            print("\nVaccines will be made available to you in Phase 2a\n")
+            return "Phase 2a"
         else:
             # User input is integer less than 50
-            print("\nVaccines will be made available to you in Phase 2b\n")
+            return "Phase 2b"
 
 def other_category(user_age):
     """
@@ -124,16 +117,17 @@ def other_category(user_age):
     based on the user's response and age.
 
     Returns:
-        None
+        str: Eligibility phase message. Returns "Phase 2a", "Phase 2a", "Phase 2a", or the result of indigenous_australian(user_age).
     """
     user_other = get_user_input("\nAre you another critical or high-risk worker? (Y/N) : ")
     if user_other[0] == "y":
         print("\nVaccines will be made available to you in Phase 2a\n")
+        return "Phase 2a"
     elif user_other[0] == "n":
         if user_age >= AGE_ELIGIBLE_AUSTRALIAN:
-            print("\nVaccines will be made available to you in Phase 2a\n")
+            return "Phase 2a"
         else:
-            indigenous_australian(user_age)
+            return indigenous_australian(user_age)
 
 def determine_phase_2():
     """
@@ -143,38 +137,46 @@ def determine_phase_2():
     based on the entered age and additional factors such as underlying medical conditions and disability.
 
     Returns:
-    - None if the user enters invalid age or non-numerical characters.
-    - Prints messages indicating the user's eligibility phase based on the entered age and other factors.
+        str: Eligibility phase message. Returns "Phase 3" if eligible, "not recommended" if not recommended,
+        or the result of other functions based on user input and age.
     """
-    try:
-        user_age = int(input("\nPlease enter your age (in years) : "))
-    except ValueError:
-        # return error message - User input non-numerical characters
-        print(
-            "\nIt appears you've enter an invalid character(s) - "
-            "Please ensure you enter a valid age (non-negative numerical characters only)\n"
-        )
-        return
+    while True:
+        try:
+            user_age = int(input("\nPlease enter your age (in years) : "))
+        except ValueError:
+            # Print error message - User input non-numerical characters
+            print(
+                "\nIt appears you've entered invalid character(s) - "
+                "Please ensure you enter a valid age (non-negative numerical characters only)\n"
+            )
+            continue
+
+        if user_age < 0:
+            # Print error message - Invalid input. Please enter a valid age.
+            print("\nInvalid input. Please enter a valid age (non-negative numerical characters only)\n")
+        else:
+            break
 
     if user_age < 0:
         # User input is integer greater than or equal to '0' to less than '18'
         print("\nInvalid input. Please enter a valid age (non-negative numerical characters only)\n")
-    elif 0 <= user_age < AGE_MINOR:
+        return
+    if 0 <= user_age < AGE_MINOR:
         is_minor = get_user_input("\nHas it been recommended you obtain a vaccine? (Y/N) : ")
         if is_minor[0] == "y":
-            print("\nVaccines will be made available to you in phase 3\n")
+            return "Phase 3"
         elif is_minor[0] == "n":
-            print("\nVaccination is not recommended for you\n")
+            return "not recommended"
     elif AGE_MINOR <= user_age < AGE_ELDERLY:
         # User input is integer greater than or equal to '18' to less than '70'
         user_med_condition = get_user_input("\nDo you have an underlying medical condition or a disability? (Y/N) : ")
         if user_med_condition[0] == "y":
-            print("\nVaccines will be made available to you in phase 1b\n")
+            return "Phase 1b"
         elif user_med_condition[0] == "n":
             if user_age >= AGE_ELIGIBLE_2B:
-                indigenous_australian(user_age)
+                return indigenous_australian(user_age)
             else:
-                other_category(user_age)
+                return other_category(user_age)
     else:
         print("\nVaccines will be made available to you in phase 1b\n")
 
@@ -191,18 +193,18 @@ def main():
     """
     print("*** Vaccination phase rollout ***")
 
-    group = PHASE_1A
+    phase = determine_phase_1a()
 
-    if group == PHASE_1A:
-        if not determine_phase_1a():
-            group += 1
+    if phase == "Not eligible for Phase 1a":
+        phase = determine_phase_1b()
 
-    if group == PHASE_1B:
-        if not determine_phase_1b():
-            group += 1
+    if phase == "Not eligible for Phase 1b":
+        phase = determine_phase_2()
 
-    if group == PHASE_2:
-        determine_phase_2()
+    if phase == "not recommended":
+        print("\nVaccination is not recommended for you\n")
+    elif phase is not None:
+        print(f"Vaccines will be made available to you in {phase}")
 
 if __name__ == "__main__":
     """
