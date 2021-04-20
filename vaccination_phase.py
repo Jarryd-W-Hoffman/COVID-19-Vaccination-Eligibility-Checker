@@ -121,7 +121,6 @@ def other_category(user_age):
     """
     user_other = get_user_input("\nAre you another critical or high-risk worker? (Y/N) : ")
     if user_other[0] == "y":
-        print("\nVaccines will be made available to you in Phase 2a\n")
         return "Phase 2a"
     elif user_other[0] == "n":
         if user_age >= AGE_ELIGIBLE_AUSTRALIAN:
@@ -157,10 +156,6 @@ def determine_phase_2():
         else:
             break
 
-    if user_age < 0:
-        # User input is integer greater than or equal to '0' to less than '18'
-        print("\nInvalid input. Please enter a valid age (non-negative numerical characters only)\n")
-        return
     if 0 <= user_age < AGE_MINOR:
         is_minor = get_user_input("\nHas it been recommended you obtain a vaccine? (Y/N) : ")
         if is_minor[0] == "y":
@@ -178,7 +173,7 @@ def determine_phase_2():
             else:
                 return other_category(user_age)
     else:
-        print("\nVaccines will be made available to you in phase 1b\n")
+        return "Phase 1b"
 
 def main():
     """
