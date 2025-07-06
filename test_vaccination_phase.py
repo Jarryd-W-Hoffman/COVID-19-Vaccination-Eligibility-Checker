@@ -5,9 +5,6 @@ Description:
 This module contains unit tests for the vaccination_phase module. Each test case covers specific
 functionality and scenarios to ensure the proper functioning of the vaccination_phase module.
 
-Author:
-[Your Name]
-
 Date:
 20/04/2021
 
