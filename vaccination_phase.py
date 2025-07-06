@@ -8,9 +8,6 @@ This script determines an individual's eligibility for COVID-19 vaccination phas
 such as age, occupation, and medical conditions. It implements a Command-Line Interface (CLI) to interactively
 gather information from the user and provide corresponding vaccination phase recommendations.
 
-Author:
-Jarryd Hoffman
-
 Date:
 02/04/2021
 """
